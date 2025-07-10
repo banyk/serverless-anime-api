@@ -1,0 +1,42 @@
+[
+  {
+    "id": "aot-01",
+    "title": "Attack on Titan",
+    "studio": "Wit Studio",
+    "episodes": 25,
+    "genres": ["Action", "Drama"],
+    "year": 2013
+  },
+  {
+    "id": "ds-01",
+    "title": "Demon Slayer",
+    "studio": "ufotable",
+    "episodes": 26,
+    "genres": ["Action", "Supernatural"],
+    "year": 2019
+  },
+  {
+    "id": "jjk-01",
+    "title": "Jujutsu Kaisen",
+    "studio": "MAPPA",
+    "episodes": 24,
+    "genres": ["Action", "Dark Fantasy"],
+    "year": 2020
+  },
+  {
+    "id": "fma-01",
+    "title": "Fullmetal Alchemist: Brotherhood",
+    "studio": "Bones",
+    "episodes": 64,
+    "genres": ["Adventure", "Drama", "Fantasy"],
+    "year": 2009
+  },
+  {
+    "id": "opm-01",
+    "title": "One Punch Man",
+    "studio": "Madhouse",
+    "episodes": 12,
+    "genres": ["Action", "Comedy", "Superhero"],
+    "year": 2015
+  }
+]

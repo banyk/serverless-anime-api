@@ -2,8 +2,6 @@
 
 AniSearch is a minimalist and serverless web application that allows users to search for anime titles and browse anime metadata — all powered by AWS Lambda, API Gateway, DynamoDB, and S3.
 
-![screenshot](screenshots/anime-search.png)
-
 ---
 
 ## ✨ Features

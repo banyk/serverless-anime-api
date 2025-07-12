@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniSearch - Anime Discovery Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: all 0.5s ease;
+        }
+
+        .navbar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-search {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 50px 12px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .search-btn:hover {
+            color: #ffffff;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Center Search Section */
+        .center-search-section {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            width: 90%;
+            max-width: 600px;
+            transition: all 0.5s ease;
+        }
+
+        .center-search-section.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
+        }
+
+        .center-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .center-subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .center-search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .center-search-input {
+            flex: 1;
+            padding: 18px 60px 18px 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 18px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .center-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .center-search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+        }
+
+        .center-search-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .center-search-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .center-search-wrapper {
+            position: relative;
+        }
+
+        .show-all-btn {
+            padding: 15px 30px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .show-all-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Content Section */
+        .content-section {
+            padding: 0 40px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.5s ease;
+        }
+
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .see-all {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .see-all:hover {
+            color: #6366f1;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            justify-items: center;
+        }
+
+        .results-grid.single-result {
+            grid-template-columns: 1fr;
+            max-width: 300px;
+            margin: 0 auto 40px auto;
+        }
+
+        .anime-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .anime-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .anime-info {
+            padding: 20px;
+        }
+
+        .anime-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.3;
+            color: #ffffff;
+        }
+
+        .anime-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .genre-tag {
+            background: rgba(79, 70, 229, 0.3);
+            color: #a5b4fc;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(79, 70, 229, 0.5);
+        }
+
+        .anime-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: rgba(220, 38, 38, 0.1);
+            color: #fca5a5;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            margin: 20px 0;
+            text-align: center;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-results h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+                position: relative;
+                width: 100%;
+                top: 0;
+                left: 0;
+            }
+
+            .nav-search {
+                margin: 0;
+                max-width: 100%;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .center-title {
+                font-size: 36px;
+            }
+
+            .center-search-container {
+                flex-direction: column;
+            }
+
+            .center-search-input {
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+
+            .center-search-btn {
+                position: static;
+                transform: none;
+                margin-top: 15px;
+                width: 100%;
+                border-radius: 25px;
+                height: 50px;
+            }
+
+            .center-search-btn:hover {
+                transform: none;
+            }
+
+            .content-section {
+                padding: 0 20px;
+            }
+
+            .content-section.visible {
+                padding-top: 20px;
+            }
+
+            .results-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 15px;
+            }
+
+            .anime-image {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">AniSearch</a>
+        
+        <div class="nav-search">
+            <input 
+                type="text" 
+                id="navSearchInput" 
+                class="search-input" 
+                placeholder="Search for anime..."
+                autocomplete="off"
+            />
+            <button id="navSearchBtn" class="search-btn">🔍</button>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="#" class="nav-btn">Explore</a>
+            <a href="#" class="nav-btn">New</a>
+            <a href="#" class="nav-btn">Saved</a>
+            <div class="profile-btn">A</div>
+        </div>
+    </nav>
+
+    <!-- Center Search Section -->
+    <div class="center-search-section" id="centerSearchSection">
+        <h1 class="center-title">AniSearch</h1>
+        <p class="center-subtitle">Discover amazing anime from our extensive database</p>
+        
+        <div class="center-search-wrapper">
+            <input 
+                type="text" 
+                id="centerSearchInput" 
+                class="center-search-input" 
+                placeholder="Search for anime..."
+                autocomplete="off"
+            />
+            <button id="centerSearchBtn" class="center-search-btn">🔍</button>
+        </div>
+        
+        <button id="showAllBtn" class="show-all-btn">Show All Anime</button>
+    </div>
+
+    <div class="content-section" id="contentSection">
+        <div id="loadingIndicator" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Loading anime...</p>
+        </div>
+
+        <div id="searchResults" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">Search Results</h2>
+                <a href="#" class="see-all" onclick="goBackToSearch()">Back to Search</a>
+            </div>
+            <div id="resultsContainer" class="results-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        class AnimeSearchApp {
+            constructor() {
+                this.apiEndpoint = 'https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime';
+                
+                // Center search elements
+                this.centerSearchInput = document.getElementById('centerSearchInput');
+                this.centerSearchBtn = document.getElementById('centerSearchBtn');
+                this.centerSearchSection = document.getElementById('centerSearchSection');
+                this.showAllBtn = document.getElementById('showAllBtn');
+                
+                // Nav search elements
+                this.navSearchInput = document.getElementById('navSearchInput');
+                this.navSearchBtn = document.getElementById('navSearchBtn');
+                this.navbar = document.getElementById('navbar');
+                
+                // Content elements
+                this.contentSection = document.getElementById('contentSection');
+                this.loadingIndicator = document.getElementById('loadingIndicator');
+                this.resultsContainer = document.getElementById('resultsContainer');
+                this.searchResults = document.getElementById('searchResults');
+                
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                // Center search events
+                this.centerSearchBtn.addEventListener('click', () => this.performSearch());
+                this.centerSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performSearch();
+                    }
+                });
+
+                // Show all anime button
+                this.showAllBtn.addEventListener('click', () => this.showAllAnime());
+
+                // Nav search events
+                this.navSearchBtn.addEventListener('click', () => this.performNavSearch());
+                this.navSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performNavSearch();
+                    }
+                });
+            }
+
+            async performSearch() {
+                const query = this.centerSearchInput.value.trim();
+                
+                if (!query) {
+                    this.showCenterError('Please enter an anime title to search');
+                    return;
+                }
+
+                this.showLoading();
+                
+                try {
+                    const response = await fetch(`${this.apiEndpoint}?q=${encodeURIComponent(query)}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (!data || !Array.isArray(data) || data.length === 0) {
+                        this.showCenterError(`Anime "${query}" not found. Please check your spelling.`);
+                        return;
+                    }
+                    
+                    this.displayResults(data, query);
+                    this.switchToResultsView();
+                    
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.showCenterError(`Search failed: ${error.message}`);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async performNavSearch() {
+                const query = this.navSearchInput.value.trim();
+                
+                if (!query) {
+                    return;
+                }
+
+                this.showLoading();
+                
+                try {
+                    const response = await fetch(`${this.apiEndpoint}?q=${encodeURIComponent(query)}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.displayResults(data, query);
+                    
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.showError(`Search failed: ${error.message}`);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async showAllAnime() {
+                this.showLoading();
+                
+                try {
+                    const response = await fetch(this.apiEndpoint);
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.displayResults(data, null);
+                    this.switchToResultsView();
+                    
+                } catch (error) {
+                    console.error('Load all anime error:', error);
+                    this.showCenterError(`Loading failed: ${error.message}`);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            switchToResultsView() {
+                // Hide center search section
+                this.centerSearchSection.classList.add('hidden');
+                
+                // Show navbar and content
+                setTimeout(() => {
+                    this.navbar.classList.add('visible');
+                    this.contentSection.classList.add('visible');
+                    
+                    // Sync search inputs
+                    this.navSearchInput.value = this.centerSearchInput.value;
+                }, 300);
+            }
+
+            displayResults(data, query) {
+                this.resultsContainer.innerHTML = '';
+                this.searchResults.style.display = 'block';
+
+                if (!data || !Array.isArray(data) || data.length === 0) {
+                    this.showNoResults(query);
+                    return;
+                }
+
+                // Update section title with count
+                const sectionTitle = this.searchResults.querySelector('.section-title');
+                if (query) {
+                    sectionTitle.textContent = `Search Results: "${query}" (${data.length})`;
+                } else {
+                    sectionTitle.textContent = `All Anime (${data.length})`;
+                }
+
+                // Add class for single result styling
+                if (data.length === 1) {
+                    this.resultsContainer.classList.add('single-result');
+                } else {
+                    this.resultsContainer.classList.remove('single-result');
+                }
+
+                data.forEach(anime => {
+                    const animeCard = this.createAnimeCard(anime);
+                    this.resultsContainer.appendChild(animeCard);
+                });
+
+                // Add staggered animation
+                const cards = this.resultsContainer.querySelectorAll('.anime-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 50);
+                });
+            }
+
+            createAnimeCard(anime) {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                
+                const imageUrl = anime.coverImage || anime.image || 'https://via.placeholder.com/200x280/667eea/ffffff?text=No+Image';
+                const title = anime.title || anime.name || 'Unknown Title';
+                const genres = anime.genres || [];
+                const description = anime.description || anime.synopsis || 'No description available';
+
+                card.innerHTML = `
+                    <img src="${imageUrl}" alt="${title}" class="anime-image" onerror="this.src='https://via.placeholder.com/200x280/667eea/ffffff?text=No+Image'">
+                    <div class="anime-info">
+                        <h3 class="anime-title">${title}</h3>
+                        <div class="anime-genres">
+                            ${genres.slice(0, 3).map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                        </div>
+                        <p class="anime-description">${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    console.log('Anime card clicked:', title);
+                });
+
+                return card;
+            }
+
+            showLoading() {
+                this.loadingIndicator.style.display = 'block';
+                this.searchResults.style.display = 'none';
+            }
+
+            hideLoading() {
+                this.loadingIndicator.style.display = 'none';
+            }
+
+            showCenterError(message) {
+                // Create temporary error message in center section
+                const existingError = document.querySelector('.center-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message center-error';
+                errorDiv.innerHTML = `<strong>⚠️ Error:</strong> ${message}`;
+                
+                this.centerSearchSection.appendChild(errorDiv);
+                
+                // Remove error after 5 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.remove();
+                    }
+                }, 5000);
+            }
+
+            showError(message) {
+                this.searchResults.style.display = 'block';
+                this.resultsContainer.innerHTML = `
+                    <div class="error-message">
+                        <strong>⚠️ Error:</strong> ${message}
+                    </div>
+                `;
+            }
+
+            showNoResults(query) {
+                this.resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h3>No anime found</h3>
+                        <p>We couldn't find any anime${query ? ` "${query}"` : ''}. Try a different search term.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Global function for going back to search
+        function goBackToSearch() {
+            const app = window.animeApp;
+            
+            // Hide content and navbar
+            document.getElementById('contentSection').classList.remove('visible');
+            document.getElementById('navbar').classList.remove('visible');
+            
+            // Show center search section
+            setTimeout(() => {
+                document.getElementById('centerSearchSection').classList.remove('hidden');
+                document.getElementById('searchResults').style.display = 'none';
+                
+                // Clear search inputs
+                document.getElementById('centerSearchInput').value = '';
+                document.getElementById('navSearchInput').value = '';
+            }, 300);
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.animeApp = new AnimeSearchApp();
+        });
+    </script>
+</body>
+</html>

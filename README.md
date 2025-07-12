@@ -53,11 +53,11 @@ S3 (Anime cover images)
 ## 🚀 Live Demo
 
 **Frontend (static website)**  
-📍 `http://anime-api-website.s3-website-us-east-1.amazonaws.com/`
+📍 `[http://anime-api-website.s3-website-us-east-1.amazonaws.com/](http://anime-api-website.s3-website-us-east-1.amazonaws.com/)`
 
 **API endpoint**  
-📍 `https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime`
+📍 `[https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime](https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime)`
 
 > You can run a query like:  
-> `https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime?q=attack`
+> `[https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime?q=attack](https://448miw4o32.execute-api.us-east-2.amazonaws.com/prod/anime?q=attack)`
 
